@@ -4,18 +4,28 @@ import safety_gym
 import safe_rl
 from safe_rl.utils.run_utils import setup_logger_kwargs
 from safe_rl.utils.mpi_tools import mpi_fork
+import mujoco_safety_gym
 
+
+import os
+import sys
+from rllab_adapter import RllabAdapter
 
 def main(robot, task, algo, seed, exp_name, cpu):
 
     # Verify experiment
-    robot_list = ['point', 'car', 'doggo']
-    task_list = ['goal1', 'goal2', 'button1', 'button2', 'push1', 'push2']
+    robot_list = ['point', 'car', 'doggo','ant','halfcheetah']
+    task_list = ['goal1', 'goal2', 'button1', 'button2', 'push1', 'push2', 'safe', 'circle']
     algo_list = ['ppo', 'ppo_lagrangian', 'trpo', 'trpo_lagrangian', 'cpo']
 
     algo = algo.lower()
     task = task.capitalize()
+    
     robot = robot.capitalize()
+    
+    if 'cheetah' in robot:
+        robot = 'HalfCheetah'
+
     assert algo in algo_list, "Invalid algo"
     assert task.lower() in task_list, "Invalid task"
     assert robot.lower() in robot_list, "Invalid robot"
@@ -26,12 +36,12 @@ def main(robot, task, algo, seed, exp_name, cpu):
         num_steps = 1e8
         steps_per_epoch = 60000
     else:
-        num_steps = 1e7
-        steps_per_epoch = 30000
+        num_steps = 2e8
+        steps_per_epoch = 70000
     epochs = int(num_steps / steps_per_epoch)
     save_freq = 50
-    target_kl = 0.01
-    cost_lim = 25
+    target_kl = 0.015
+    cost_lim = 10
 
     # Fork for parallelizing
     mpi_fork(cpu)
@@ -42,9 +52,19 @@ def main(robot, task, algo, seed, exp_name, cpu):
 
     # Algo and Env
     algo = eval('safe_rl.'+algo)
-    env_name = 'Safexp-'+robot+task+'-v0'
+    if 'Safe' in task:
+        env_name = robot+task+'-v2'
+    elif 'Circle' in task:
+        env_name = robot+task+'-v0'
+    else: 
+        env_name = 'Safexp-'+robot+task+'-v0'
+    
+    if 'Circle' in task:
+        env_fn = lambda: RllabAdapter(domain=robot+task, task='v0')
+    else:
+        env_fn=lambda: gym.make(env_name)
 
-    algo(env_fn=lambda: gym.make(env_name),
+    algo(env_fn=env_fn,
          ac_kwargs=dict(
              hidden_sizes=(256, 256),
             ),
@@ -56,7 +76,6 @@ def main(robot, task, algo, seed, exp_name, cpu):
          seed=seed,
          logger_kwargs=logger_kwargs
          )
-
 
 
 if __name__ == '__main__':
