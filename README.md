@@ -1,25 +1,16 @@
-**Status:** Archive (code is provided as-is, no updates expected)
-
 # Safety Starter Agents
 
-A companion repo to the paper "Benchmarking Safe Exploration in Deep Reinforcement Learning," containing a variety of unconstrained and constrained RL algorithms.
+This fork provides several modifications to the safety starter agents repo. 
 
-This repo contains the implementations of PPO, TRPO, PPO-Lagrangian, TRPO-Lagrangian, and CPO used to obtain the results in the "Benchmarking Safe Exploration" paper, as well as experimental implementations of SAC and SAC-Lagrangian not used in the paper.
+The branch <rllab> provides functionality for running experiments on rllab environments such as the circle and gather environments.
 
-Note that the PPO implementations here follow the convention from [Spinning Up](https://spinningup.openai.com) rather than [Baselines](https://www.github.com/openai/baselines): they use the early stopping trick, omit observation and reward normalization, and do not use the clipped value loss, among other potential diffs. As a result, while it is easy to fairly compare this PPO to this TRPO, it is not the strongest PPO implementation (in the sense of sample efficiency) and can be improved on substantially.
+The branch <algos> provides modifications to cpo with experimental code for pathwise derivatives, maximum entropy objectives etc. in trust-region optimization. 
+# Installation
 
-## Supported Platforms
-
-This package has been tested on Mac OS Mojave and Ubuntu 16.04 LTS, and is probably fine for most recent Mac and Linux operating systems. 
-
-Requires **Python 3.6 or greater.**  
-
-## Installation
-
-To install this package:
+To install this package, follow the common installation process for safety starter agents:
 
 ```
-git clone https://github.com/openai/safety-starter-agents.git
+git clone https://github.com/anyboby/safety-starter-agents.git
 
 cd safety-starter-agents
 
@@ -27,7 +18,6 @@ pip install -e .
 ```
 
 **Warning:** Installing this package does **not** install Safety Gym. If you want to use the algorithms in this package to train agents on onstrained RL environments, make sure to install Safety Gym according to the instructions on the [Safety Gym repo](https://www.github.com/openai/safety-gym).
-
 
 ## Getting Started
 
