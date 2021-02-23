@@ -14,7 +14,7 @@ from rllab_adapter import RllabAdapter
 def main(robot, task, algo, seed, exp_name, cpu):
 
     # Verify experiment
-    robot_list = ['point', 'car', 'doggo','ant','halfcheetah']
+    robot_list = ['point', 'car', 'doggo','ant','halfcheetah','simplehumanoid']
     task_list = ['goal1', 'goal2', 'button1', 'button2', 'push1', 'push2', 'safe', 'circle']
     algo_list = ['ppo', 'ppo_lagrangian', 'trpo', 'trpo_lagrangian', 'cpo']
 
@@ -37,10 +37,10 @@ def main(robot, task, algo, seed, exp_name, cpu):
         steps_per_epoch = 60000
     else:
         num_steps = 2e8
-        steps_per_epoch = 70000
+        steps_per_epoch = 50000
     epochs = int(num_steps / steps_per_epoch)
     save_freq = 50
-    target_kl = 0.015
+    target_kl = 0.01
     cost_lim = 10
 
     # Fork for parallelizing
